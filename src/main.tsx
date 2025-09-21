@@ -7,7 +7,7 @@ import App from "./App";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    {/*<RouterProvider router={gameRouter} />*/}
-    <App/>
+   <RouterProvider router={gameRouter} />
+     {/*<App/>*/}
   </React.StrictMode>
 );
