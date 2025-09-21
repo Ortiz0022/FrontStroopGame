@@ -15,7 +15,7 @@ import type { RankingRowDto } from "./types/rankingRowDto";
 
 export default function App(){
   // configuración
-  const [baseUrl, setBaseUrl] = useLocalState("stroob_base", import.meta.env.VITE_BACKEND_BASE ?? "https://1n21m23q-7121.use2.devtunnels.ms/");
+  const [baseUrl, setBaseUrl] = useLocalState("stroob_base", import.meta.env.VITE_BACKEND_BASE ?? "https://9w8f8r2p-7121.use2.devtunnels.ms/");
   React.useEffect(()=> setBase(baseUrl), [baseUrl]);
 
   // sesión / sala
