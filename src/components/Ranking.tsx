@@ -1,6 +1,5 @@
 import React from "react";
 import type { RankingRowDto } from "../types/rankingRowDto";
-import { Link } from "@tanstack/react-router";
 
 
 export default function Ranking({ rows }: { rows: RankingRowDto[] }){
@@ -17,9 +16,6 @@ export default function Ranking({ rows }: { rows: RankingRowDto[] }){
           const avg = Math.round(r.AvgMs ?? r.avgMs ?? 0);
           return <div key={i} className="item"><b>#{i+1}</b> {u} — 🏆 {wins} | Partidas: {gp} | Mejor: {best} | Prom. {avg} ms</div>;
         })}
-      </div>
-      <div className="card small">
-        <Link to="/game/lobby" className="button">Volver al lobby</Link>
       </div>
     </div>
   );
