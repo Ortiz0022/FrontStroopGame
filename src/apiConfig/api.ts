@@ -1,13 +1,11 @@
+import { SERVER_BASE } from "../SignalRService/connection";
 import type { PlayerDto } from "../types/playerDto";
-import type { ChatMsgDto } from "../types/chatDto";
-import type { Guid } from "../types/chatDto";
+import type { ChatMsgDto, Guid } from "../types/chatDto";
 import type { RankingRowDto } from "../types/rankingRowDto";
 
-let BASE = import.meta.env.VITE_BACKEND_BASE as string | undefined;
-export function setBase(url: string) {
-  BASE = url.endsWith("/") ? url : url + "/";
-}
-export function getBase() { return BASE ?? ""; }
+export function getBase() { return SERVER_BASE; }
+// Mantengo la firma para compatibilidad, pero no hace nada:
+export function setBase(_url: string) { /* no-op */ }
 
 async function j<T>(res: Response) {
   if (!res.ok) throw new Error(`${res.status} ${await res.text().catch(()=>"")}`);
@@ -17,18 +15,19 @@ async function j<T>(res: Response) {
 // === Users ===
 export async function apiLogin(username: string) {
   const r = await fetch(getBase() + "api/users/login", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username })
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username }),
   });
   return j<{ status: "created" | "existing"; user: { id: Guid; username: string; createdAt: string } }>(r);
 }
 
 // === Rooms ===
 export async function apiCreateRoom(creatorUserId: Guid) {
-  // body = "GUID" como JSON string
   const r = await fetch(getBase() + "api/rooms", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(creatorUserId)
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(creatorUserId),
   });
   return j<{ Id?: string; id?: string; Code?: string; code?: string; MinPlayers?: number; minPlayers?: number; MaxPlayers?: number; maxPlayers?: number }>(r);
 }

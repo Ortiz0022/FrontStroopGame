@@ -1,29 +1,24 @@
+// src/SignalRService/hub.ts
+import connection, { ensureStarted } from "./connection";
 import type { Guid } from "../types/chatDto";
-import * as signalR from "@microsoft/signalr";
-import { getBase } from "../apiConfig/api";
 
-
-export type Hub = signalR.HubConnection;
-
-export function createHub(): Hub {
-  return new signalR.HubConnectionBuilder()
-    .withUrl(getBase() + "hubs/game", { withCredentials: true })
-    .withAutomaticReconnect()
-    .build();
+export async function joinRoom(code: string, userId: Guid, username: string) {
+  await ensureStarted();
+  return connection.invoke("JoinRoom", code, userId, username);
 }
-
-export async function joinRoom(hub: Hub, code: string, userId: Guid, username: string) {
-  await hub.invoke("JoinRoom", code, userId, username);
+export async function leaveRoom(code: string) {
+  await ensureStarted();
+  return connection.invoke("LeaveRoom", code);
 }
-export async function leaveRoom(hub: Hub, code: string) {
-  await hub.invoke("LeaveRoom", code);
+export async function sendChat(code: string, userId: Guid, text: string) {
+  await ensureStarted();
+  return connection.invoke("SendChat", code, userId, text);
 }
-export async function sendChat(hub: Hub, code: string, userId: Guid, text: string) {
-  await hub.invoke("SendChat", code, userId, text);
+export async function startGame(code: string, rounds: number) {
+  await ensureStarted();
+  return connection.invoke("StartGame", code, rounds);
 }
-export async function startGame(hub: Hub, code: string, rounds: number) {
-  await hub.invoke("StartGame", code, rounds);
-}
-export async function submitAnswer(hub: Hub, code: string, userId: Guid, roundId: number, optionId: number, rtSec: number) {
-  await hub.invoke("SubmitAnswer", code, userId, roundId, optionId, rtSec);
+export async function submitAnswer(code: string, userId: Guid, roundId: number, optionId: number, rtSec: number) {
+  await ensureStarted();
+  return connection.invoke("SubmitAnswer", code, userId, roundId, optionId, rtSec);
 }
