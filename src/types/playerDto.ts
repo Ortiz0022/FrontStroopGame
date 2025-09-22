@@ -1,7 +1,6 @@
-export type Guid = string;
 
 export type PlayerDto = {
-  UserId?: Guid; userId?: Guid;
+  UserId?: string; userId?: string;
   Username?: string; username?: string;
   SeatOrder?: number; seatOrder?: number;
   IsOwner?: boolean; isOwner?: boolean;

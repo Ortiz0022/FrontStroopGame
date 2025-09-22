@@ -4,7 +4,7 @@ import type { ChatMsgDto, Guid } from "../types/chatDto";
 import type { RankingRowDto } from "../types/rankingRowDto";
 
 export function getBase() { return SERVER_BASE; }
-// Mantengo la firma para compatibilidad, pero no hace nada:
+// Mantengo la firma para compatibilidad, pero no hace nada aquí:
 export function setBase(_url: string) { /* no-op */ }
 
 async function j<T>(res: Response) {
@@ -49,4 +49,21 @@ export async function apiGetRankingTop(take = 10) {
     if (!r.ok) return [] as RankingRowDto[];
     return j<RankingRowDto[]>(r);
   } catch { return []; }
+}
+
+// === Game ===
+export async function apiGetCurrentRound(roomCode: string) {
+  const r = await fetch(getBase() + `api/game/${encodeURIComponent(roomCode)}/round`);
+  if (!r.ok) return { HasRound: false } as any;
+  const data = await r.json();
+
+  return {
+    HasRound: data.HasRound ?? data.hasRound,
+    RoundId:  data.RoundId  ?? data.roundId,
+    Word:     data.Word     ?? data.word,
+    InkHex:   data.InkHex   ?? data.inkHex,
+    Options:  data.Options  ?? data.options ?? [],
+    RemainingForThisPlayer:
+      data.RemainingForThisPlayer ?? data.remainingForThisPlayer ?? 0,
+  };
 }
