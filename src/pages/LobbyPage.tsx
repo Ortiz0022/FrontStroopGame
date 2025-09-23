@@ -57,8 +57,9 @@ export default function LobbyPage() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden text-slate-200">
-      {/* Fondo animado */}
+      {/* Cielo animado */}
       <StroopSkyBG intensity={2} />
+      {/* Retícula/estrellas suaves */}
       <div
         className="absolute inset-0 -z-10 opacity-25"
         style={{
@@ -67,6 +68,11 @@ export default function LobbyPage() {
           backgroundSize: "48px 48px",
         }}
       />
+      {/* Suelo decorativo al fondo (como la imagen) */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-28 bg-[radial-gradient(rgba(255,255,255,0.18)_1px,transparent_1px)] [background-size:16px_16px] bg-[length:16px_16px]">
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,rgba(12,22,53,0.9)_0%,rgba(9,18,40,0.98)_100%)] [mask-image:linear-gradient(to_top,black,transparent)]" />
+        <div className="absolute inset-x-0 bottom-0 h-3 bg-[#0b1b34]" />
+      </div>
 
       <div className="mx-auto min-h-screen max-w-6xl p-4">
         <TopBar
@@ -76,7 +82,7 @@ export default function LobbyPage() {
           onBaseUrl={() => {}}
         />
 
-        {/* 👇 Si gameStarted es true, mostramos el juego inline */}
+        {/* Juego inline cuando inicia */}
         {gameStarted ? (
           <>
             <GamePage onBack={returnToLobby} playersCount={players.length} />
@@ -86,11 +92,11 @@ export default function LobbyPage() {
           </>
         ) : (
           <>
-            {/* 1) Bloque crear/unirse */}
+            {/* 1) Pantalla JOIN/CREATE (no conectado) */}
             {!isConnected && (
               <div className="py-14">
-                {/* Título grande como en el ejemplo base */}
-                <div className="mb-8 text-center">
+                {/* Título grande */}
+                <div className="mb-10 text-center">
                   <div
                     className="text-6xl md:text-7xl font-extrabold tracking-wide drop-shadow-[0_6px_0_rgba(0,0,0,0.45)]"
                     style={{ color: "#f59e0b" }}
@@ -99,20 +105,26 @@ export default function LobbyPage() {
                   </div>
                 </div>
 
-                {/* Mantiene la lógica: usamos el componente LobbyRoom */}
-                <LobbyRoom
-                  logged={user}
-                  onCreateRoom={handleCreate}
-                  onConnect={handleConnect}
-                  onDisconnect={doDisconnect}
-                  createdCode={createdCode}
-                  canConnect={!!user?.id}
-                  connected={isConnected}
-                />
+                {/* Contenedor central como la foto */}
+                <div className="mx-auto max-w-5xl grid grid-cols-1 gap-8 md:grid-cols-2 items-stretch">
+                  {/* Usamos el mismo componente pero “neutralizamos” su borde externo
+                      para que se vean DOS paneles separados como en la captura */}
+                  <div className="[&>div]:border-0 [&>div]:bg-transparent [&>div]:shadow-none">
+                    <LobbyRoom
+                      logged={user}
+                      onCreateRoom={handleCreate}
+                      onConnect={handleConnect}
+                      onDisconnect={doDisconnect}
+                      createdCode={createdCode}
+                      canConnect={!!user?.id}
+                      connected={isConnected}
+                    />
+                  </div>
+                </div>
               </div>
             )}
 
-            {/* 2) Sala de espera + chat */}
+            {/* 2) Sala de espera + chat (conectado) */}
             {isConnected && (
               <>
                 <div className="mb-6 flex items-center justify-between rounded-2xl border-4 border-[#0c1c36] bg-gradient-to-b from-[#0b1220] to-[#111827] px-5 py-4 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
