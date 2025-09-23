@@ -14,7 +14,7 @@ export default function LobbyRoom({
         bg-[linear-gradient(180deg,#0b1b34_0%,#0f274b_100%)]
         p-6 md:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
         <div className="text-center text-sky-300 font-extrabold tracking-wider text-2xl uppercase">
-          JOIN A ROOM
+          UNIRSE A SALA
         </div>
 
         <label className="block mt-5">
@@ -41,7 +41,7 @@ export default function LobbyRoom({
               textShadow: "0 1px 0 rgba(255,255,255,.25)",
             }}
           >
-            JOIN
+            UNIRSE
           </button>
 
           <button
@@ -60,7 +60,7 @@ export default function LobbyRoom({
         bg-[linear-gradient(180deg,#0b1b34_0%,#0f274b_100%)]
         p-6 md:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
         <div className="text-center text-sky-300 font-extrabold tracking-wider text-2xl uppercase">
-          CREATE A ROOM
+          CREAR SALA
         </div>
 
         <button
