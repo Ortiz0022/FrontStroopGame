@@ -40,7 +40,6 @@ export function useGame(userId: Guid | null, roomCode: string | null) {
       RemainingForThisPlayer: data.RemainingForThisPlayer ?? data.remainingForThisPlayer ?? 0,
     };
     setRound(dto);
-    setTurnLabel("jugando");
     setCanAnswer(true);
   }, []);
 
