@@ -8,7 +8,7 @@ export function useLocalState<T>(key: string, init: T) {
       // Caso normal: lo guardamos como JSON
       return JSON.parse(raw) as T;
     } catch {
-      // Caso legado: había un string plano (p. ej. https://...).
+      // Caso legado: había un string plano 
       // Lo usamos tal cual y en el próximo render se guardará como JSON.
       return (raw as unknown) as T;
     }
@@ -18,7 +18,7 @@ export function useLocalState<T>(key: string, init: T) {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch {
-      // no-op
+      // no
     }
   }, [key, value]);
 

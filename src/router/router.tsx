@@ -57,12 +57,6 @@ import {
     component: LobbyPage,
   })
   
-  // // 🔑 WaitingRoom route paramétrica
-  // const roomWaitRoute = new Route({
-  //   getParentRoute: () => gameLayoutRoute,
-  //   path: '/room/$roomCode/wait',
-  //   component: WaitingRoomPage,
-  // })
   
   const roomGameRoute = new Route({
     getParentRoute: () => gameLayoutRoute,

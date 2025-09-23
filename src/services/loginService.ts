@@ -2,9 +2,9 @@ import { apiLogin, apiGetRankingTop } from "../apiConfig/api";
 import type { RankingRowDto } from "../types/rankingRowDto";
 
 export async function loginAndFetchRanking(username: string) {
-  const res = await apiLogin(username); // { status, user:{ id, username, ... } }
+  const res = await apiLogin(username); 
 
-  // ✅ Guardar el usuario para que useLobby lo lea con useSessionState(...)
+  //Guardar el usuario para que useLobby lo lea con useSessionState(...)
   if (res?.user?.id && res?.user?.username) {
     sessionStorage.setItem(
       "stroob_user",

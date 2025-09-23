@@ -18,15 +18,14 @@ export default function GamePage({
   const game = useGame(user?.id ?? null, roomCode ?? null);
   const { roundsPerPlayer, setRoundsPerPlayer, onStartGame } = useWaitingRoom();
 
-  // 🔒 Candado definitivo por sala (persistente en localStorage)
   const [startLockedForever, setStartLockedForever] = React.useState(false);
   const [isStarting, setIsStarting] = React.useState(false);
   const startLockRef = React.useRef(false);
 
-  // Helper: clave por sala
+
   const lockKey = roomCode ? `stroop_started_${roomCode}` : "";
 
-  // Aplica candado y oculta botón ya mismo
+  // Aplica candado y oculta botón 
   const lockStart = React.useCallback(() => {
     if (!lockKey) return;
     try { localStorage.setItem(lockKey, "1"); } catch {}
@@ -47,12 +46,12 @@ export default function GamePage({
 
   const handleBackToLobby = React.useCallback(async () => {
     try {
-      if (roomCode) await apiReturnToLobby(roomCode); // resetea estado de juego en backend (NO tocamos el candado)
+      if (roomCode) await apiReturnToLobby(roomCode); // resetea estado de juego en backend
     } catch {
       console.warn("Falló reset en backend");
     } finally {
       game.resetGame();
-      setIsStarting(false);      // solo feedback visual; el candado sigue en true si ya jugó
+      setIsStarting(false);      
       startLockRef.current = startLockedForever; // mantiene el lock si ya jugó
       onBack?.(); // setGameStarted(false) en Lobby
     }
@@ -67,24 +66,18 @@ export default function GamePage({
     if (!isOwner || !isConnected) return;
     if (startLockRef.current || startLockedForever) return;
 
-    // ⚡ Oculta el botón inmediatamente y marca la sala como jugada
+    // Oculta el botón inmediatamente y marca la sala como jugada
     lockStart();
 
     try {
       await onStartGame(roomCode);
     } catch (err) {
       console.warn("onStartGame falló:", err);
-      // Si quieres permitir reintento en caso de fallo, descomenta:
-      // try { localStorage.removeItem(lockKey); } catch {}
-      // setStartLockedForever(false);
-      // startLockRef.current = false;
-      // setIsStarting(false);
     }
   };
 
   React.useEffect(() => {
     const onGameStarted = async (p: any) => {
-      // ⚡ También bloquea si detectamos inicio por evento del hub (otro cliente pudo iniciar)
       lockStart();
 
       const rpp = p?.RoundsPerPlayer ?? p?.roundsPerPlayer;
@@ -110,7 +103,6 @@ export default function GamePage({
     const onTurnChanged = (t: any) => game.handleTurnChanged(t);
 
     const onNewRound = (payload: any) => {
-      // ⚡ Si llega primer round y por alguna razón no vimos GameStarted, bloquea igual
       lockStart();
       game.handleNewRound(payload);
     };
@@ -154,7 +146,7 @@ export default function GamePage({
           />
         </label>
 
-        {/* ⛔️ Si la sala ya jugó, NO renderizamos el botón */}
+        {/* Si la sala ya jugó, NO renderizamos el botón */}
         {isOwner && isConnected && !startLockedForever && (
           <button
             onClick={handleStart}

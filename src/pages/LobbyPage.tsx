@@ -3,7 +3,7 @@ import * as React from "react";
 import TopBar from "../components/TopBar";
 import RoundsControl from "../components/RoundsControl";
 import PlayersAndChat from "../components/PlayersAndChat";
-import GamePage from "./GamePage";            // 👈 lo renderizamos inline cuando inicia
+import GamePage from "./GamePage";           
 import { useLobby } from "../hooks/useLobby";
 import { useWaitingRoom } from "../hooks/useWaitingRoom";
 import { SERVER_BASE } from "../SignalRService/connection";
@@ -11,7 +11,7 @@ import Ranking from "../components/Ranking";
 import StroopSkyBG from "../components/bg/StroopSkyBG";
 
 export default function LobbyPage() {
-  // useLobby SIN gameHandlers aquí (handlers van en GamePage)
+
   const {
     user,
     createdCode,
@@ -26,7 +26,6 @@ export default function LobbyPage() {
     doConnect,
     doDisconnect,
     onSendChat,
-    // 👇 para volver del juego inline
     returnToLobby,
   } = useLobby();
 
@@ -38,7 +37,6 @@ export default function LobbyPage() {
     onStartGame,
   } = useWaitingRoom();
 
-  // ── Handlers existentes (no cambia lógica)
   const handleConnect = async (code: string) => {
     const codeStr = String(code || "").trim();
     if (!codeStr) return;
@@ -56,10 +54,8 @@ export default function LobbyPage() {
       return;
     }
     await onStartGame(roomCode);
-    // ❌ sin navegación: GamePage se mostrará inline cuando llegue "GameStarted"
   };
 
-  // ── Estado SOLO de UI para el panel de “join” (no altera tu lógica)
   const [joinCode, setJoinCode] = React.useState("");
 
   return (
@@ -81,7 +77,6 @@ export default function LobbyPage() {
       {/* Wrapper */}
       <div className="max-w-6xl mx-auto px-4 py-6">
         
-        {/* 👇 Si el juego ya inició, se muestra inline */}
         {gameStarted ? (
           <>
             <GamePage onBack={returnToLobby} />
@@ -91,9 +86,7 @@ export default function LobbyPage() {
           </>
         ) : (
           <>
-            {/* ─────────────────────────────────────────────────────────────
-                1) PANTALLA “JOIN / CREATE” (cuando NO estamos conectados)
-                ───────────────────────────────────────────────────────────── */}
+           
             {!isConnected && (
               <div className="py-10">
                 {/* Título */}

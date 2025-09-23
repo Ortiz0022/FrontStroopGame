@@ -16,9 +16,8 @@ export function useLogin() {
     setError(null);
     try {
       const { res /*, rankingTop*/ } = await loginAndFetchRanking(username);
-      // Guardamos exactamente lo que ya guardabas: { id, username }
+      // Guarda id, username 
       setUser({ id: res?.user?.id as Guid, username: res?.user?.username ?? null });
-      // Si necesitas el ranking arriba, retorna rankingTop desde aquí (lo tengo disponible).
       return res;
     } catch (e: any) {
       setError(e?.message ?? "Error de login");

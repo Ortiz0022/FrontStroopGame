@@ -17,11 +17,11 @@ type ScoreRow = {
 export default function FinalResults({
   board,
   ranking,
-  onBack, // 👈 NUEVO
+  onBack, 
 }: {
   board: ScoreRow[];
   ranking: RankingRowDto[];
-  onBack?: () => void; // 👈 NUEVO
+  onBack?: () => void; 
 }) {
   return (
     <>

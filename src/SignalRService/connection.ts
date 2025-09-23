@@ -1,13 +1,11 @@
 import * as signalR from "@microsoft/signalr";
 
-//  EDITA SOLO ESTA LÍNEA
-export const SERVER_BASE = "http://26.155.73.119:5266/"; // ← con "/" al final
+export const SERVER_BASE = "http://26.155.73.119:5266/"; 
 
-// Derivados
 export const HUB_URL = SERVER_BASE + "hubs/game";
 
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl(HUB_URL /*, { withCredentials: true }*/) // quita withCredentials si no usas cookies
+  .withUrl(HUB_URL) 
   .withAutomaticReconnect()
   .build();
 

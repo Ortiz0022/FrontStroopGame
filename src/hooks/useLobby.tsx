@@ -35,26 +35,24 @@ const [user, setUser] = useSessionState<{ id: Guid | null; username: string | nu
   const [isConnected, setConnected] = React.useState(false);
   const [isOwner, setOwner] = React.useState(false);
 
-  // bandera para render inline del juego
   const [gameStarted, setGameStarted] = React.useState(false);
 
   const connectingRef = React.useRef<string | null>(null);
 
-  // UI
+
   const [players, setPlayers] = React.useState<PlayerDto[]>([]);
   const [chat, setChat] = React.useState<ChatMsgDto[]>([]);
   const [scoreboard, setScoreboard] = React.useState<ScoreRowDto[]>([]);
 
-  // cleanup de handlers
   const cleanupRef = React.useRef<null | (() => void)>(null);
 
-  // ✅ Ref estable para handlers (evita capturar referencias viejas)
+  //evita capturar referencias viejaS
   const handlersRef = React.useRef<GameHandlers | undefined>(gameHandlers);
   React.useEffect(() => {
     handlersRef.current = gameHandlers;
   }, [gameHandlers]);
 
-  // ✅ Cleanup global al desmontar (por si quedó algo pendiente)
+
   React.useEffect(() => {
     return () => {
       try { cleanupRef.current?.(); } catch {}
@@ -117,7 +115,7 @@ const [user, setUser] = useSessionState<{ id: Guid | null; username: string | nu
     const onChatHistory = (arr: any[]) => setChat((arr || []) as any[]);
     const onChatMessage = (m: any) => setChat(c => [...c, m]);
 
-    // Handlers del juego (desde ref estable)
+    // Handlers del juego 
     const onGameStarted = () => {
       setGameStarted(true);
       handlersRef.current?.onGameStarted?.();
@@ -142,7 +140,7 @@ const [user, setUser] = useSessionState<{ id: Guid | null; username: string | nu
 
     const onGameFinished = (rows: any) => {
       handlersRef.current?.onGameFinished?.(rows);
-      // podrías: setGameStarted(false);
+      //setGameStarted(false);
     };
 
     connection.on("UserJoined", onUserJoined);
@@ -151,7 +149,7 @@ const [user, setUser] = useSessionState<{ id: Guid | null; username: string | nu
     connection.on("ChatHistory", onChatHistory);
     connection.on("ChatMessage", onChatMessage);
 
-    // 🔔 GameStarted: flag y push de round actual (defensivo)
+    // GameStarted: flag y push de round actual
     connection.on("GameStarted", async () => {
       onGameStarted();
       try {
@@ -239,7 +237,7 @@ const [user, setUser] = useSessionState<{ id: Guid | null; username: string | nu
     await sendChat(roomCode, user.id as any, txt);
   }, [roomCode, user?.id]);
 
-  // ✅ Efecto defensivo: si ya estamos conectados y la partida está iniciada,
+  // Efecto defensivo: si ya estamos conectados y la partida está iniciada,
   // intenta traer el round actual (por recarga o al llegar tarde)
   React.useEffect(() => {
     let cancelled = false;

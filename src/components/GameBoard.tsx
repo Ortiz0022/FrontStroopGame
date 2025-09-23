@@ -19,7 +19,7 @@ function getColor(o: RoundOptionDto) {
   return COLOR_MAP[cid ?? 0] ?? "#111827";
 }
 
-// 🔐 normalizador de IDs
+// normalizador de IDs
 function normId(v: unknown) {
   return v == null ? "" : String(v).trim().toLowerCase();
 }
@@ -67,13 +67,13 @@ export default function GameBoard({
 
   const [o1, o2] = options;
 
-  // 🧠 mi id y el id del turno actual
+  //mi id y el id del turno actual
   const myId = normId((user as any)?.id ?? (user as any)?.Id ?? (user as any)?.userId);
   const currentTurnUserId = normId(
     (round as any)?.CurrentPlayerUserId ?? (round as any)?.currentPlayerUserId
   );
 
-  // ✅ habilitado si el hook dice que sí o si el backend manda mi turno
+  // habilitado si el hook dice que sí o si el backend manda mi turno
   const effectiveCanAnswer = Boolean(
     canAnswer || (currentTurnUserId && myId && myId === currentTurnUserId)
   );

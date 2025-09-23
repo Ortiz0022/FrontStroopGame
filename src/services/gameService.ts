@@ -1,7 +1,6 @@
 import { submitAnswer } from "../SignalRService/hub";
 
-/**
- * Enviar respuesta de StroopGame al backend
+/*Enviar respuesta de StroopGame al backend
  */
 export async function gameSubmitAnswer(
   roomCode: string,

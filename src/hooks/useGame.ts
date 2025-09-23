@@ -46,7 +46,6 @@ export function useGame(userId: Guid | null, roomCode: string | null) {
     };
     setRound(dto);
   
-    // 👇 usa el que venga del servidor; si no viene, usa el último TurnChanged que tengamos
     const curPlayerId =
       data?.CurrentPlayerUserId ??
       data?.currentPlayerUserId ??
@@ -101,7 +100,7 @@ export function useGame(userId: Guid | null, roomCode: string | null) {
       const r = round;
       if (!rc || !uid || !r) return;
 
-      setCanAnswer(false); // bloqueo inmediato anti doble-click
+      setCanAnswer(false); // deshabilita inmediatamente
 
       await gameSubmitAnswer(
         rc,
