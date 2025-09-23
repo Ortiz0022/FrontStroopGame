@@ -88,15 +88,28 @@ export default function LobbyPage() {
           <>
             {/* 1) Bloque crear/unirse */}
             {!isConnected && (
-              <LobbyRoom
-                logged={user}
-                onCreateRoom={handleCreate}
-                onConnect={handleConnect}
-                onDisconnect={doDisconnect}
-                createdCode={createdCode}
-                canConnect={!!user?.id}
-                connected={isConnected}
-              />
+              <div className="py-14">
+                {/* Título grande como en el ejemplo base */}
+                <div className="mb-8 text-center">
+                  <div
+                    className="text-6xl md:text-7xl font-extrabold tracking-wide drop-shadow-[0_6px_0_rgba(0,0,0,0.45)]"
+                    style={{ color: "#f59e0b" }}
+                  >
+                    STROOP GAME
+                  </div>
+                </div>
+
+                {/* Mantiene la lógica: usamos el componente LobbyRoom */}
+                <LobbyRoom
+                  logged={user}
+                  onCreateRoom={handleCreate}
+                  onConnect={handleConnect}
+                  onDisconnect={doDisconnect}
+                  createdCode={createdCode}
+                  canConnect={!!user?.id}
+                  connected={isConnected}
+                />
+              </div>
             )}
 
             {/* 2) Sala de espera + chat */}
