@@ -26,13 +26,7 @@ type Props = {
   onAnswer: (optionId: number, rtSec: number) => void;
 };
 
-export default function GameBoard({
-  visible,
-  round,
-  turnLabel,
-  canAnswer,
-  onAnswer,
-}: Props) {
+export default function GameBoard({ visible, round, turnLabel, canAnswer, onAnswer }: Props) {
   const startRef = React.useRef<number>(0);
 
   React.useEffect(() => {
@@ -44,8 +38,8 @@ export default function GameBoard({
   const options = (round?.Options ?? (round as any)?.options ?? []) as RoundOptionDto[];
   if ((options?.length ?? 0) < 2) {
     return (
-      <div className="card">
-        <h2>Esperando opciones…</h2>
+      <div className="card border-4 border-cyan-300 bg-[#172144] rounded-3xl shadow-2xl p-7 mb-5">
+        <h2 className="text-yellow-400 text-2xl font-extrabold">Esperando opciones…</h2>
       </div>
     );
   }
@@ -59,30 +53,44 @@ export default function GameBoard({
   };
 
   return (
-    <div className="card">
-      <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
-        <h2>Juego (Stroop)</h2>
-        <span className="pill"> {turnLabel}</span>
+    <div className="card border-4 border-cyan-300 bg-[#172144] rounded-3xl shadow-2xl p-7 mb-5">
+      <div className="row flex justify-between items-center mb-4">
+        <h2 className="text-yellow-500 font-extrabold text-2xl">Juego (Stroop)</h2>
+        <span className="pill bg-[#293059]/80 text-blue-200 font-bold px-5 py-2 rounded-xl shadow shadow-black/20 text-lg backdrop-blur-md">
+          {turnLabel}
+        </span>
       </div>
 
-      <div className="game">
-        <div className="word" style={{ color: round?.InkHex ?? (round as any)?.inkHex ?? "#cbd5e1" }}>
+      <div className="game text-center">
+        <div className="word font-extrabold text-white text-6xl mb-2" style={{ color: round?.InkHex ?? (round as any)?.inkHex ?? "#cbd5e1" }}>
           {round?.Word ?? (round as any)?.word ?? "—"}
         </div>
-        <div className="subtitle">Selecciona el color que <u>dice</u> la palabra</div>
+        <div className="subtitle text-slate-300 mb-7">
+          Selecciona el color que <u>dice</u> la palabra
+        </div>
 
-        <div className="options">
+        <div className="options flex gap-7 justify-center mb-6">
           {o1 && (
-            <button className="color-card" style={{ background: getColor(o1) }} disabled={!canAnswer} onClick={() => submit(o1)} />
+            <button
+              className="color-card w-28 h-28 rounded-2xl outline-none border-4 border-[#35436a] shadow-[0_8px_24px_rgba(0,0,0,.25)] transition-all active:scale-95"
+              style={{ background: getColor(o1) }}
+              disabled={!canAnswer}
+              onClick={() => submit(o1)}
+            />
           )}
           {o2 && (
-            <button className="color-card" style={{ background: getColor(o2) }} disabled={!canAnswer} onClick={() => submit(o2)} />
+            <button
+              className="color-card w-28 h-28 rounded-2xl outline-none border-4 border-[#35436a] shadow-[0_8px_24px_rgba(0,0,0,.25)] transition-all active:scale-95"
+              style={{ background: getColor(o2) }}
+              disabled={!canAnswer}
+              onClick={() => submit(o2)}
+            />
           )}
         </div>
 
-        <div className="row small" style={{ justifyContent: "space-between" }}>
+        <div className="row flex justify-between text-sm text-slate-400">
           <div>
-            Te quedan: <b>{round?.RemainingForThisPlayer ?? (round as any)?.remainingForThisPlayer ?? "—"}</b>
+            Te quedan: <b className="text-white">{round?.RemainingForThisPlayer ?? (round as any)?.remainingForThisPlayer ?? "—"}</b>
           </div>
         </div>
       </div>

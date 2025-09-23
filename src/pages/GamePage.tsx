@@ -18,7 +18,7 @@ export default function GamePage({
   const game = useGame(user?.id ?? null, roomCode ?? null);
   const { roundsPerPlayer, setRoundsPerPlayer, onStartGame } = useWaitingRoom();
 
-   const handleBackToLobby = React.useCallback(async () => {
+  const handleBackToLobby = React.useCallback(async () => {
     try {
       if (roomCode) {
         await apiReturnToLobby(roomCode); // resetea back
@@ -26,8 +26,8 @@ export default function GamePage({
     } catch {
       console.warn("Falló reset en backend");
     } finally {
-      game.resetGame();   // limpia front
-      onBack?.();         // notifica a LobbyPage (setGameStarted(false))
+      game.resetGame(); // limpia front
+      onBack?.(); // notifica a LobbyPage (setGameStarted(false))
     }
   }, [roomCode, game, onBack]);
 
@@ -39,8 +39,6 @@ export default function GamePage({
     }
     await onStartGame(roomCode);
   };
-
-  
 
   React.useEffect(() => {
     const onGameStarted = async (p: any) => {
@@ -78,41 +76,70 @@ export default function GamePage({
     connection.on("GameFinished", onFinished);
 
     return () => {
-      try { connection.off("GameStarted", onGameStarted); } catch {}
-      try { connection.off("TurnChanged", onTurnChanged); } catch {}
-      try { connection.off("NewRound", onNewRound); } catch {}
-      try { connection.off("Scoreboard", onScoreboard); } catch {}
-      try { connection.off("Winner", onWinner); } catch {}
-      try { connection.off("GameFinished", onFinished); } catch {}
+      try {
+        connection.off("GameStarted", onGameStarted);
+      } catch {}
+      try {
+        connection.off("TurnChanged", onTurnChanged);
+      } catch {}
+      try {
+        connection.off("NewRound", onNewRound);
+      } catch {}
+      try {
+        connection.off("Scoreboard", onScoreboard);
+      } catch {}
+      try {
+        connection.off("Winner", onWinner);
+      } catch {}
+      try {
+        connection.off("GameFinished", onFinished);
+      } catch {}
     };
   }, [roomCode, game, setRoundsPerPlayer]);
 
   return (
     <div className="wrap">
-      <div className="card" style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-        <label>
+      <div
+        className="card border-4 border-cyan-300 bg-[#172144] rounded-3xl shadow-2xl p-5 mb-5 flex gap-3 flex-wrap items-center"
+        style={{ alignItems: "center" }}
+      >
+        <label className="text-white font-bold flex items-center gap-2">
           Rondas por jugador:
-          <input type="number" min={1} max={10} value={roundsPerPlayer} readOnly style={{ width: 70, marginLeft: 8 }} />
+          <input
+            type="number"
+            min={1}
+            max={10}
+            value={roundsPerPlayer}
+            readOnly
+            className="w-16 bg-[#0a1a32] rounded-lg text-center text-blue-300"
+          />
         </label>
 
-        <button onClick={handleStart} disabled={!isConnected || !isOwner}>
+        <button
+          onClick={handleStart}
+          disabled={!isConnected || !isOwner}
+          className="rounded-2xl px-6 py-3 font-extrabold text-xl shadow-inner uppercase
+            bg-gradient-to-b from-orange-400 to-orange-600 border-2 border-orange-700 text-brown-900 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           Iniciar juego (owner)
         </button>
 
-        <span className="pill">{game.turnLabel}</span>
-        <span className="pill">
+        <span className="pill bg-[#293059]/80 text-blue-200 font-bold px-5 py-2 rounded-xl shadow shadow-black/20 text-lg backdrop-blur-md">
+          {game.turnLabel || "sin juego"}
+        </span>
+        <span className="pill bg-[#293059]/80 text-blue-200 font-bold px-5 py-2 rounded-xl shadow shadow-black/20 text-lg backdrop-blur-md">
           Sala: <b>{roomCode || "—"}</b> • Jugadores: <b>{playersCount}</b>
         </span>
       </div>
 
       {game.finished ? (
-        <FinalResults board={game.finalBoard} ranking={game.ranking} onBack={handleBackToLobby}  />
+        <FinalResults board={game.finalBoard} ranking={game.ranking} onBack={handleBackToLobby} />
       ) : (
         <>
           {!game.round && (
-            <div className="card">
-              <h2>Esperando primer round…</h2>
-              {!isOwner && <div className="small muted">Espera a que el owner inicie la partida.</div>}
+            <div className="card border-4 border-cyan-300 bg-[#172144] rounded-3xl shadow-2xl p-7 mb-5">
+              <h2 className="text-yellow-400 text-2xl font-extrabold">Esperando primer round…</h2>
+              {!isOwner && <div className="small muted text-white">Espera a que el owner inicie la partida.</div>}
             </div>
           )}
 
