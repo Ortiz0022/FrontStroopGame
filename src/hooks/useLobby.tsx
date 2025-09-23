@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useLocalState } from "./useLocalState";
 import connection from "../SignalRService/connection";
 import { joinRoom, leaveRoom, sendChat } from "../SignalRService/hub";
 import { apiCreateRoom, apiGetPlayers, apiGetCurrentRound } from "../apiConfig/api";
@@ -8,6 +7,7 @@ import type { Guid } from "../types/chatDto";
 import type { PlayerDto } from "../types/playerDto";
 import type { ChatMsgDto } from "../types/chatDto";
 import type { ScoreRowDto } from "../types/scoreRowDto";
+import { useSessionState } from "./useSessionState";
 
 // Handlers del juego que nos pasa useGame
 type GameHandlers = {
@@ -20,13 +20,18 @@ type GameHandlers = {
 };
 
 export function useLobby(gameHandlers?: GameHandlers) {
-  // sesión / sala
-  const [user, setUser] = useLocalState<{ id: Guid | null; username: string | null }>(
-    "stroob_user",
-    { id: null, username: null }
-  );
+  // // sesión / sala
+  // const [user, setUser] = useLocalState<{ id: Guid | null; username: string | null }>(
+  //   "stroob_user",
+  //   { id: null, username: null }
+  // );
+const [user, setUser] = useSessionState<{ id: Guid | null; username: string | null }>(
+  "stroob_user",
+  { id: null, username: null }
+);
+
   const [createdCode, setCreatedCode] = React.useState<string | null>(null);
-  const [roomCode, setRoomCode] = useLocalState<string>("stroob_room", "");
+  const [roomCode, setRoomCode] = useSessionState<string>("stroob_room", "");
   const [isConnected, setConnected] = React.useState(false);
   const [isOwner, setOwner] = React.useState(false);
 
