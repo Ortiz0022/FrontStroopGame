@@ -5,7 +5,7 @@ import { useLobby } from "../hooks/useLobby";
 import { useGame } from "../hooks/useGame";
 import { useWaitingRoom } from "../hooks/useWaitingRoom";
 import connection from "../SignalRService/connection";
-import { apiGetCurrentRound } from "../apiConfig/api";
+import { apiGetCurrentRound, apiReturnToLobby } from "../apiConfig/api";
 
 export default function GamePage({
   onBack,
@@ -18,6 +18,19 @@ export default function GamePage({
   const game = useGame(user?.id ?? null, roomCode ?? null);
   const { roundsPerPlayer, setRoundsPerPlayer, onStartGame } = useWaitingRoom();
 
+   const handleBackToLobby = React.useCallback(async () => {
+    try {
+      if (roomCode) {
+        await apiReturnToLobby(roomCode); // resetea back
+      }
+    } catch {
+      console.warn("Falló reset en backend");
+    } finally {
+      game.resetGame();   // limpia front
+      onBack?.();         // notifica a LobbyPage (setGameStarted(false))
+    }
+  }, [roomCode, game, onBack]);
+
   const handleStart = async () => {
     if (!roomCode) return;
     if ((playersCount ?? 0) < 2) {
@@ -26,6 +39,8 @@ export default function GamePage({
     }
     await onStartGame(roomCode);
   };
+
+  
 
   React.useEffect(() => {
     const onGameStarted = async (p: any) => {
@@ -91,7 +106,7 @@ export default function GamePage({
       </div>
 
       {game.finished ? (
-        <FinalResults board={game.finalBoard} ranking={game.ranking} onBack={onBack} />
+        <FinalResults board={game.finalBoard} ranking={game.ranking} onBack={handleBackToLobby}  />
       ) : (
         <>
           {!game.round && (

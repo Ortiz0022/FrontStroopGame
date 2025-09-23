@@ -1,7 +1,7 @@
 import * as signalR from "@microsoft/signalr";
 
 //  EDITA SOLO ESTA LÍNEA
-export const SERVER_BASE = "http://26.163.235.30:5266/"; // ← con "/" al final
+export const SERVER_BASE = "http://26.155.73.119:5266/"; // ← con "/" al final
 
 // Derivados
 export const HUB_URL = SERVER_BASE + "hubs/game";

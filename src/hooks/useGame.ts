@@ -52,7 +52,7 @@ export function useGame(userId: Guid | null, roomCode: string | null) {
       data?.currentPlayerUserId ??
       turnUserRef.current;
     const me = userRef.current;
-    const stillHas = (dto.RemainingForThisPlayer ?? 0) > 0;
+    const stillHas = (dto.RemainingForThisPlayer ?? 0) >= 0;
     setCanAnswer(!!me && !!curPlayerId && sameId(me, curPlayerId) && stillHas);
   }, []);
 
@@ -66,7 +66,7 @@ export function useGame(userId: Guid | null, roomCode: string | null) {
     setTurnLabel(isMine ? "tu turno: " + uname : "turno de: " + uname);
 
     if (round) {
-      const stillHas = (round.RemainingForThisPlayer ?? 0) > 0;
+      const stillHas = (round.RemainingForThisPlayer ?? 0) >= 0;
       setCanAnswer(isMine && stillHas);
     } else {
       setCanAnswer(false);

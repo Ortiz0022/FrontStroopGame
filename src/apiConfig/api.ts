@@ -42,6 +42,14 @@ export async function apiGetMessages(code: string, take = 50) {
   return j<ChatMsgDto[]>(r);
 }
 
+export async function apiReturnToLobby(code: string) {
+  const r = await fetch(getBase() + `api/rooms/${encodeURIComponent(code)}/return`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+  return j<{ ok: boolean }>(r);
+}
+
 // === Ranking ===
 export async function apiGetRankingTop(take = 10) {
   try {
