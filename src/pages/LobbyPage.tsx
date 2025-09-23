@@ -75,13 +75,6 @@ export default function LobbyPage() {
       </div>
 
       <div className="mx-auto min-h-screen max-w-6xl p-4">
-        <TopBar
-          connLabel={isConnected ? "conectado" : "desconectado"}
-          loginLabel={user.username ? "logueado: " + user.username : "sin login"}
-          baseUrl={SERVER_BASE}
-          onBaseUrl={() => {}}
-        />
-
         {/* Juego inline cuando inicia */}
         {gameStarted ? (
           <>
@@ -93,8 +86,8 @@ export default function LobbyPage() {
         ) : (
           <>
             {/* 1) Pantalla JOIN/CREATE (no conectado) */}
-            {!isConnected && (
-              <div className="py-14">
+           {!isConnected && (
+              <div className="flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center">
                 {/* Título grande */}
                 <div className="mb-10 text-center">
                   <div
@@ -107,19 +100,15 @@ export default function LobbyPage() {
 
                 {/* Contenedor central como la foto */}
                 <div className="mx-auto max-w-5xl grid grid-cols-1 gap-8 md:grid-cols-2 items-stretch">
-                  {/* Usamos el mismo componente pero “neutralizamos” su borde externo
-                      para que se vean DOS paneles separados como en la captura */}
-                  <div className="[&>div]:border-0 [&>div]:bg-transparent [&>div]:shadow-none">
-                    <LobbyRoom
-                      logged={user}
-                      onCreateRoom={handleCreate}
-                      onConnect={handleConnect}
-                      onDisconnect={doDisconnect}
-                      createdCode={createdCode}
-                      canConnect={!!user?.id}
-                      connected={isConnected}
-                    />
-                  </div>
+                  <LobbyRoom
+                    logged={user}
+                    onCreateRoom={handleCreate}
+                    onConnect={handleConnect}
+                    onDisconnect={doDisconnect}
+                    createdCode={createdCode}
+                    canConnect={!!user?.id}
+                    connected={isConnected}
+                  />
                 </div>
               </div>
             )}
