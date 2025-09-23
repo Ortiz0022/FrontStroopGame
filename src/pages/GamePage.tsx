@@ -7,14 +7,20 @@ import { useWaitingRoom } from "../hooks/useWaitingRoom";
 import connection from "../SignalRService/connection";
 import { apiGetCurrentRound } from "../apiConfig/api";
 
-export default function GamePage({ onBack }: { onBack?: () => void }) {
-  const { user, roomCode, isOwner, players, isConnected, returnToLobby } = useLobby(); // 👈 NUEVO
+export default function GamePage({
+  onBack,
+  playersCount = 0,
+}: {
+  onBack?: () => void;
+  playersCount?: number;
+}) {
+  const { user, roomCode, isOwner, isConnected } = useLobby();
   const game = useGame(user?.id ?? null, roomCode ?? null);
   const { roundsPerPlayer, setRoundsPerPlayer, onStartGame } = useWaitingRoom();
 
   const handleStart = async () => {
     if (!roomCode) return;
-    if ((players?.length ?? 0) < 2) {
+    if ((playersCount ?? 0) < 2) {
       alert("Necesitas al menos 2 jugadores para iniciar la partida");
       return;
     }
@@ -36,6 +42,7 @@ export default function GamePage({ onBack }: { onBack?: () => void }) {
               InkHex: cur.InkHex,
               Options: cur.Options,
               RemainingForThisPlayer: cur.RemainingForThisPlayer,
+              CurrentPlayerUserId: cur.CurrentPlayerUserId, // por si tu endpoint lo retorna
             });
           }
         }
@@ -79,16 +86,12 @@ export default function GamePage({ onBack }: { onBack?: () => void }) {
 
         <span className="pill">{game.turnLabel}</span>
         <span className="pill">
-          Sala: <b>{roomCode || "—"}</b> • Jugadores: <b>{players?.length ?? 0}</b>
+          Sala: <b>{roomCode || "—"}</b> • Jugadores: <b>{playersCount}</b>
         </span>
       </div>
 
       {game.finished ? (
-        <FinalResults
-          board={game.finalBoard}
-          ranking={game.ranking}
-          onBack={onBack}
-        />
+        <FinalResults board={game.finalBoard} ranking={game.ranking} onBack={onBack} />
       ) : (
         <>
           {!game.round && (

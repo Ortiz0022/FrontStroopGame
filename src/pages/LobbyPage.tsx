@@ -68,10 +68,10 @@ export default function LobbyPage() {
 
       {/* 👇 Si gameStarted es true, mostramos el juego inline */}
       {gameStarted ? (
-        <>
-          <GamePage onBack={returnToLobby} />
-          <Ranking rows={scoreboard} />
-        </>
+         <>
+         <GamePage onBack={returnToLobby} playersCount={players.length} />
+         <Ranking rows={scoreboard} />
+       </>
       ) : (
         <>
           {/* 1) Bloque crear/unirse (cuando NO estamos conectados) */}
