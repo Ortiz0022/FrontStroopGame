@@ -6,4 +6,6 @@ export type NewRoundDto = {
   InkHex?: string; inkHex?: string;
   Options?: RoundOptionDto[]; options?: RoundOptionDto[];
   RemainingForThisPlayer?: number; remainingForThisPlayer?: number;
+
+   CurrentPlayerUserId?: string; currentPlayerUserId?: string;
 };

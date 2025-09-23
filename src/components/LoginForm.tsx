@@ -1,5 +1,6 @@
 // src/components/LoginForm.tsx
 import * as React from "react";
+import Ranking from "./Ranking";
 
 export default function LoginForm({
   onLogin,
@@ -71,6 +72,8 @@ export default function LoginForm({
         <div className="h-4 rounded bg-sky-200/10" />
         <div className="h-4 rounded bg-sky-200/10" />
       </div>
+
+
     </div>
   );
 }

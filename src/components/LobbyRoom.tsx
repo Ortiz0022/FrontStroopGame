@@ -1,4 +1,5 @@
 import React from "react";
+import Ranking from "./Ranking";
 
 export default function LobbyRoom({
   logged, onCreateRoom, onConnect, onDisconnect,
@@ -86,6 +87,7 @@ export default function LobbyRoom({
             </div>
           </div>
         </div>
+        
       </div>
     </>
   );

@@ -18,18 +18,45 @@ export default function GamePage({
   const game = useGame(user?.id ?? null, roomCode ?? null);
   const { roundsPerPlayer, setRoundsPerPlayer, onStartGame } = useWaitingRoom();
 
+  // 🔒 Candado definitivo por sala (persistente en localStorage)
+  const [startLockedForever, setStartLockedForever] = React.useState(false);
+  const [isStarting, setIsStarting] = React.useState(false);
+  const startLockRef = React.useRef(false);
+
+  // Helper: clave por sala
+  const lockKey = roomCode ? `stroop_started_${roomCode}` : "";
+
+  // Aplica candado y oculta botón ya mismo
+  const lockStart = React.useCallback(() => {
+    if (!lockKey) return;
+    try { localStorage.setItem(lockKey, "1"); } catch {}
+    setStartLockedForever(true);
+    startLockRef.current = true;
+    setIsStarting(true);
+  }, [lockKey]);
+
+  // Lee candado al cambiar de sala
+  React.useEffect(() => {
+    if (!lockKey) {
+      setStartLockedForever(false);
+      return;
+    }
+    const val = (typeof window !== "undefined") ? localStorage.getItem(lockKey) : null;
+    setStartLockedForever(val === "1");
+  }, [lockKey]);
+
   const handleBackToLobby = React.useCallback(async () => {
     try {
-      if (roomCode) {
-        await apiReturnToLobby(roomCode); // resetea back
-      }
+      if (roomCode) await apiReturnToLobby(roomCode); // resetea estado de juego en backend (NO tocamos el candado)
     } catch {
       console.warn("Falló reset en backend");
     } finally {
-      game.resetGame(); // limpia front
-      onBack?.(); // notifica a LobbyPage (setGameStarted(false))
+      game.resetGame();
+      setIsStarting(false);      // solo feedback visual; el candado sigue en true si ya jugó
+      startLockRef.current = startLockedForever; // mantiene el lock si ya jugó
+      onBack?.(); // setGameStarted(false) en Lobby
     }
-  }, [roomCode, game, onBack]);
+  }, [roomCode, game, onBack, startLockedForever]);
 
   const handleStart = async () => {
     if (!roomCode) return;
@@ -37,11 +64,29 @@ export default function GamePage({
       alert("Necesitas al menos 2 jugadores para iniciar la partida");
       return;
     }
-    await onStartGame(roomCode);
+    if (!isOwner || !isConnected) return;
+    if (startLockRef.current || startLockedForever) return;
+
+    // ⚡ Oculta el botón inmediatamente y marca la sala como jugada
+    lockStart();
+
+    try {
+      await onStartGame(roomCode);
+    } catch (err) {
+      console.warn("onStartGame falló:", err);
+      // Si quieres permitir reintento en caso de fallo, descomenta:
+      // try { localStorage.removeItem(lockKey); } catch {}
+      // setStartLockedForever(false);
+      // startLockRef.current = false;
+      // setIsStarting(false);
+    }
   };
 
   React.useEffect(() => {
     const onGameStarted = async (p: any) => {
+      // ⚡ También bloquea si detectamos inicio por evento del hub (otro cliente pudo iniciar)
+      lockStart();
+
       const rpp = p?.RoundsPerPlayer ?? p?.roundsPerPlayer;
       if (typeof rpp === "number") setRoundsPerPlayer(rpp);
       game.resetGame();
@@ -55,7 +100,7 @@ export default function GamePage({
               InkHex: cur.InkHex,
               Options: cur.Options,
               RemainingForThisPlayer: cur.RemainingForThisPlayer,
-              CurrentPlayerUserId: cur.CurrentPlayerUserId, // por si tu endpoint lo retorna
+              CurrentPlayerUserId: cur.CurrentPlayerUserId,
             });
           }
         }
@@ -63,7 +108,13 @@ export default function GamePage({
     };
 
     const onTurnChanged = (t: any) => game.handleTurnChanged(t);
-    const onNewRound = (payload: any) => game.handleNewRound(payload);
+
+    const onNewRound = (payload: any) => {
+      // ⚡ Si llega primer round y por alguna razón no vimos GameStarted, bloquea igual
+      lockStart();
+      game.handleNewRound(payload);
+    };
+
     const onScoreboard = (rows: any) => game.handleScoreboard(rows);
     const onWinner = (w: any) => game.handleWinner(w);
     const onFinished = (rows: any) => game.handleGameFinished(rows);
@@ -76,26 +127,14 @@ export default function GamePage({
     connection.on("GameFinished", onFinished);
 
     return () => {
-      try {
-        connection.off("GameStarted", onGameStarted);
-      } catch {}
-      try {
-        connection.off("TurnChanged", onTurnChanged);
-      } catch {}
-      try {
-        connection.off("NewRound", onNewRound);
-      } catch {}
-      try {
-        connection.off("Scoreboard", onScoreboard);
-      } catch {}
-      try {
-        connection.off("Winner", onWinner);
-      } catch {}
-      try {
-        connection.off("GameFinished", onFinished);
-      } catch {}
+      try { connection.off("GameStarted", onGameStarted); } catch {}
+      try { connection.off("TurnChanged", onTurnChanged); } catch {}
+      try { connection.off("NewRound", onNewRound); } catch {}
+      try { connection.off("Scoreboard", onScoreboard); } catch {}
+      try { connection.off("Winner", onWinner); } catch {}
+      try { connection.off("GameFinished", onFinished); } catch {}
     };
-  }, [roomCode, game, setRoundsPerPlayer]);
+  }, [roomCode, game, setRoundsPerPlayer, lockStart]);
 
   return (
     <div className="wrap">
@@ -115,14 +154,16 @@ export default function GamePage({
           />
         </label>
 
-        <button
-          onClick={handleStart}
-          disabled={!isConnected || !isOwner}
-          className="rounded-2xl px-6 py-3 font-extrabold text-xl shadow-inner uppercase
-            bg-gradient-to-b from-orange-400 to-orange-600 border-2 border-orange-700 text-brown-900 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Iniciar juego (owner)
-        </button>
+        {/* ⛔️ Si la sala ya jugó, NO renderizamos el botón */}
+        {isOwner && isConnected && !startLockedForever && (
+          <button
+            onClick={handleStart}
+            className="rounded-2xl px-6 py-3 font-extrabold text-xl shadow-inner uppercase
+              bg-gradient-to-b from-orange-400 to-orange-600 border-2 border-orange-700 text-brown-900"
+          >
+            {isStarting ? "Iniciando…" : "Iniciar juego (owner)"}
+          </button>
+        )}
 
         <span className="pill bg-[#293059]/80 text-blue-200 font-bold px-5 py-2 rounded-xl shadow shadow-black/20 text-lg backdrop-blur-md">
           {game.turnLabel || "sin juego"}
@@ -132,6 +173,13 @@ export default function GamePage({
         </span>
       </div>
 
+      {/* Aviso solo para el owner cuando el botón ya no existe */}
+      {isOwner && startLockedForever && (
+        <div className="card border-2 border-rose-300/40 bg-[#2a1b2b] rounded-2xl p-4 mb-5 text-rose-100">
+          Esta sala ya jugó una partida. Crea una nueva sala para volver a jugar.
+        </div>
+      )}
+
       {game.finished ? (
         <FinalResults board={game.finalBoard} ranking={game.ranking} onBack={handleBackToLobby} />
       ) : (
@@ -140,6 +188,9 @@ export default function GamePage({
             <div className="card border-4 border-cyan-300 bg-[#172144] rounded-3xl shadow-2xl p-7 mb-5">
               <h2 className="text-yellow-400 text-2xl font-extrabold">Esperando primer round…</h2>
               {!isOwner && <div className="small muted text-white">Espera a que el owner inicie la partida.</div>}
+              {isOwner && startLockedForever && (
+                <div className="small text-rose-300 mt-2">Esta sala ya jugó una partida. Crea otra sala para volver a jugar.</div>
+              )}
             </div>
           )}
 
