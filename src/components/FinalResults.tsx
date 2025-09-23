@@ -16,7 +16,7 @@ export default function FinalResults({
 }: {
   board: ScoreRow[];
   ranking: RankingRowDto[];
-  onBack: () => void; // 👈 NUEVO
+  onBack?: () => void; // 👈 NUEVO
 }) {
   return (
     <>

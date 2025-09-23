@@ -26,7 +26,9 @@ export default function LobbyPage() {
     doConnect,
     doDisconnect,
     onSendChat,
-  } = useLobby();
+    // 👇 agrega esta línea
+    returnToLobby,
+  } = useLobby();
 
   const {
     roundsPerPlayer,
@@ -68,7 +70,7 @@ export default function LobbyPage() {
       {/* 👇 Si gameStarted es true, mostramos el juego inline */}
       {gameStarted ? (
         <>
-          <GamePage />
+          <GamePage onBack={returnToLobby} />
           <Ranking rows={scoreboard} />
         </>
       ) : (

@@ -7,7 +7,7 @@ import { useWaitingRoom } from "../hooks/useWaitingRoom";
 import connection from "../SignalRService/connection";
 import { apiGetCurrentRound } from "../apiConfig/api";
 
-export default function GamePage() {
+export default function GamePage({ onBack }: { onBack?: () => void }) {
   const { user, roomCode, isOwner, players, isConnected, returnToLobby } = useLobby(); // 👈 NUEVO
   const game = useGame(user?.id ?? null, roomCode ?? null);
   const { roundsPerPlayer, setRoundsPerPlayer, onStartGame } = useWaitingRoom();
@@ -87,7 +87,7 @@ export default function GamePage() {
         <FinalResults
           board={game.finalBoard}
           ranking={game.ranking}
-          onBack={returnToLobby}   // 👈 NUEVO
+          onBack={onBack}
         />
       ) : (
         <>
