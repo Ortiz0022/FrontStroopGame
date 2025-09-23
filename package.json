@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@microsoft/signalr": "^9.0.6",
+    "@tailwindcss/vite": "^4.1.13",
     "@tanstack/react-router": "^1.131.50",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
