@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    host: '26.85.125.221',          // equivale a 0.0.0.0 → accesible en LAN
+    host: '26.155.73.119',          // equivale a 0.0.0.0 → accesible en LAN
     port: 5173,
     strictPort: true,
     // Si el HMR no reconecta desde otros dispositivos, descomenta y pon tu IP:

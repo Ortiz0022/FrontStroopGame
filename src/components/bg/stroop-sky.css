@@ -1,0 +1,272 @@
+/* ======= NUEVO: variables responsivas y util sky-safe ======= */
+:root {
+  /* alto del skyline y de la baranda (se ajustan con la pantalla) */
+  --skyline-h: clamp(88px, 16vh, 150px);
+  --rail-h: clamp(18px, 3.6vh, 28px);
+}
+
+/* deja espacio de seguridad al contenido para que no choque con el skyline */
+.sky-safe {
+  padding-bottom: calc(var(--skyline-h) + 28px);
+}
+
+/* Contenedor base */
+.stroop-sky {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -10;
+  contain: paint; /* evita reflows raros al animar */
+}
+
+/* ========== CIELO / REJILLA (ACTUALIZADO: degradado celeste a morado) ========== */
+.sky-grad {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(1200px 800px at 80% 20%, #7ecbff55, transparent 60%),
+    /* Degradado de celeste a morado con transición más suave al skyline */
+    linear-gradient(
+      to bottom,
+      #87ceeb 0% /* celeste claro arriba */,
+      #6bb6ff 25% /* celeste medio */,
+      #4a90e2 50% /* azul intermedio */,
+      #8a2be2 75% /* morado medio */,
+      #4b0082 90% /* morado oscuro */,
+      #2c1810 100% /* transición suave al skyline */
+    );
+  animation: skyShift 22s ease-in-out infinite alternate;
+  filter: saturate(1.05);
+  transform: translateZ(0);
+}
+.sky-grad.i-2 {
+  animation-duration: 18s;
+}
+.sky-grad.i-3 {
+  animation-duration: 14s;
+}
+@keyframes skyShift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-10px);
+  }
+}
+
+.sky-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: gridDrift 36s ease-in-out infinite alternate;
+}
+.sky-grid.i-2 {
+  animation-duration: 28s;
+}
+.sky-grid.i-3 {
+  animation-duration: 22s;
+}
+@keyframes gridDrift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 18px 10px, 10px 18px;
+  }
+}
+
+/* ========== ESTRELLAS / LUNA (sin cambios relevantes) ========== */
+.sky-stars {
+  position: absolute;
+  inset: 0;
+}
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 999px;
+  background: #fff;
+  transform: scale(var(--s, 1));
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9), 0 0 10px rgba(120, 200, 255, 0.6);
+  animation: twinkle var(--t, 3s) ease-in-out var(--d, 0s) infinite;
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(calc(var(--s, 0.9)));
+  }
+  50% {
+    opacity: 1;
+    transform: scale(calc(var(--s, 1) * 1.15));
+  }
+}
+
+.moon {
+  position: absolute;
+  right: 6%;
+  top: 8%;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffe7a8 20%, #ffd76a 40%, #ffc642 60%, transparent 61%),
+    conic-gradient(from 200deg at 60% 50%, transparent 0 75%, #152b61 0 100%);
+  filter: drop-shadow(0 0 8px rgba(255, 215, 100, 0.9));
+  animation: moonPulse 3s ease-in-out infinite alternate;
+}
+@keyframes moonPulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+/* ========== NUBES (parallax + responsive) ========== */
+.cloud {
+  position: absolute;
+  border-radius: 999px;
+  background: #fff;
+  filter: blur(2px);
+  opacity: 0.75;
+  height: 120px;
+  width: 280px;
+  animation: cloudDrift 26s linear infinite;
+}
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  border-radius: inherit;
+  background: inherit;
+  filter: inherit;
+}
+.cloud::before {
+  width: 180px;
+  height: 90px;
+  left: 20px;
+  top: -28px;
+}
+.cloud::after {
+  width: 220px;
+  height: 110px;
+  right: 18px;
+  top: -12px;
+}
+
+.c1 {
+  top: 18%;
+  left: -15%;
+} /* un poco menos metida para que no se corte */
+.c2 {
+  top: 42%;
+  right: -20%;
+  width: 340px;
+  height: 150px;
+  opacity: 0.65;
+  animation-duration: 34s;
+}
+.c3 {
+  bottom: 16%;
+  left: 6%;
+  width: 240px;
+  height: 110px;
+  opacity: 0.7;
+  animation-duration: 22s;
+}
+
+.i-2.cloud {
+  animation-duration: calc(0.85 * 26s);
+}
+.i-3.cloud {
+  animation-duration: calc(0.7 * 26s);
+}
+@keyframes cloudDrift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(28%);
+  }
+}
+
+/* Breakpoints para que no "choquen" con el contenido en alto/bajo */
+@media (max-width: 1024px) {
+  .c1 {
+    left: -22%;
+    transform: scale(0.9);
+  }
+  .c2 {
+    right: -28%;
+    transform: scale(0.9);
+  }
+  .c3 {
+    left: 0%;
+    bottom: 12%;
+    transform: scale(0.9);
+  }
+}
+@media (max-width: 640px) {
+  .c1 {
+    left: -28%;
+    top: 22%;
+    transform: scale(0.75);
+  }
+  .c2 {
+    right: -36%;
+    top: 48%;
+    transform: scale(0.75);
+  }
+  .c3 {
+    left: -6%;
+    bottom: 10%;
+    transform: scale(0.75);
+  }
+}
+
+/* ========== SKYLINE (más bajo, pegado al fondo) ========== */
+.skyline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--skyline-h);
+  padding-top: var(--rail-h); /* baranda */
+  background: linear-gradient(#0b1b3b, #0b1b3b) content-box, linear-gradient(90deg, #0b1b3b 14px, transparent 14px) 0 0
+    / 64px 100% repeat-x;
+  /* Sombra más suave para mejor transición con el cielo */
+  box-shadow: inset 0 12px 24px rgba(0, 0, 0, 0.25), 0 -8px 16px rgba(75, 0, 130, 0.3); /* sombra morada suave hacia arriba */
+}
+.skyline::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: calc(var(--skyline-h) - var(--rail-h));
+  background: linear-gradient(90deg, #10234a 26px, transparent 26px 52px, #0f2248 52px, transparent 78px) 0 0 / 78px
+    100% repeat-x;
+  opacity: 0.96;
+}
+.skyline::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 12px 0;
+  height: calc(var(--skyline-h) - var(--rail-h) - 10px);
+  background: radial-gradient(#9dd7ff 1px, transparent 2px) 0 0 / 20px 14px repeat,
+    radial-gradient(#9dd7ff 1px, transparent 2px) 10px 7px / 20px 14px repeat;
+  opacity: 0.28;
+  animation: windows 4s ease-in-out infinite alternate;
+}
+@keyframes windows {
+  from {
+    opacity: 0.2;
+    filter: brightness(0.9);
+  }
+  to {
+    opacity: 0.35;
+    filter: brightness(1.1);
+  }
+}
