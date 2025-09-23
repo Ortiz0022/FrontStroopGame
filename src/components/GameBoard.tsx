@@ -62,7 +62,7 @@ export default function GameBoard({
     <div className="card">
       <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
         <h2>Juego (Stroop)</h2>
-        <span className="pill">Turno de: {turnLabel}</span>
+        <span className="pill"> {turnLabel}</span>
       </div>
 
       <div className="game">

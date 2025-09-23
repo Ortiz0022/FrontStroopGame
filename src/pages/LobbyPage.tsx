@@ -1,5 +1,4 @@
 // src/pages/LobbyPage.tsx
-import * as React from "react";
 import TopBar from "../components/TopBar";
 import LobbyRoom from "../components/LobbyRoom";
 import RoundsControl from "../components/RoundsControl";
