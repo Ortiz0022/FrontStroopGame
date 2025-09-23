@@ -2,6 +2,7 @@ import * as React from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useLogin } from "../hooks/useLogin";
 import LoginForm from "../components/LoginForm";
+import StroopSkyBG from "../components/bg/StroopSkyBG";
 
 export default function LoginPage() {
   const { user, loading, error, doLogin } = useLogin();
@@ -16,10 +17,8 @@ export default function LoginPage() {
 
   return (
     <div className="wrap">
-      <div
-        className="card row"
-        style={{ alignItems: "center", justifyContent: "space-between" }}
-      >
+      <StroopSkyBG intensity={2} />
+      <div className="card row" style={{ alignItems: "center", justifyContent: "space-between" }}>
         <h1>StroobGame • Login</h1>
         <span className="pill">{loggedLabel}</span>
       </div>
